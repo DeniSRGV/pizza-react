@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {  useSearchParams } from "react-router-dom";
 import {
   Categories,
   Sort,
@@ -21,9 +21,10 @@ import { fetchPizzas } from "../redux/pizza/asyncActions";
 import qs from "qs";
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isMounted = React.useRef(false);
+  let [searchParams, setSearchParams] = useSearchParams();
+
 
   const { items, status } = useSelector(selectPizzaData);
   const { categoryId, sort, currentPage, searchValue } =
@@ -58,40 +59,33 @@ const Home: React.FC = () => {
 
     window.scrollTo(0, 0);
   };
+  React.useEffect(()=>{
+    if(window.location.search){
+    const obj={} as any
+    for (const [key, value] of searchParams.entries()) {
+      obj[key] = value
+    }
+     obj.sort = sortList.find(
+            (objSort) => objSort.sortProperty === obj.sortProperty) || sortList[0]
+    delete obj.sortProperty
 
-  // Если изменили параметры и был первый рендер
-  React.useEffect(() => {
+  dispatch(setFilters(obj))
+}
+    isMounted.current = true;
+  },[])
+
+  React.useEffect(()=>{
     if (isMounted.current) {
       const params = {
-        categoryId: categoryId > 0 ? categoryId : null,
+        categoryId: categoryId ,
         sortProperty: sort.sortProperty,
         currentPage: currentPage || 1,
       };
       const queryString = qs.stringify(params, { skipNulls: true });
-      navigate(`/?${queryString}`);
-      getPizzas();
+      setSearchParams(queryString)
+getPizzas()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId, sort.sortProperty, currentPage]);
-
-  // Парсим параметры при первом рендере
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1)) as any;
-      const sortObj = sortList.find(
-        (obj) => obj.sortProperty === params.sortBy
-      );
-      dispatch(
-        setFilters({
-          searchValue: params.search,
-          categoryId: Number(params.categoryId),
-          currentPage: Number(params.currentPage),
-          sort: sortObj || sortList[0],
-        })
-      );
-    }
-    isMounted.current = true;
-  }, [dispatch]);
+  },[categoryId, sort.sortProperty, currentPage])
 
   const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
   const skeletons = [...new Array(6)].map((_, index) => (

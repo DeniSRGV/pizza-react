@@ -18,11 +18,9 @@ export interface FilterSliceState {
   currentPage: number;
   sort: Sort;
 }
-export type SearchUrlObj =  {
-
+export type SearchUrlObj = {
   categoryId: string;
   sortProperty: string;
   currentPage: string;
-  sort: Sort
-
-}
+  sort: Sort;
+};

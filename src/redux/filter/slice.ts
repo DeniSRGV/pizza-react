@@ -28,9 +28,13 @@ const filterSlice = createSlice({
       state.currentPage = action.payload;
     },
     setFilters(state, action: PayloadAction<FilterSliceState>) {
-        state.currentPage = action.payload.hasOwnProperty('currentPage') ? Number(action.payload.currentPage) : 1;
-        state.categoryId = action.payload.hasOwnProperty('categoryId') ? Number(action.payload.categoryId) : 0 ;
-        state.sort = action.payload.sort;
+      state.currentPage = action.payload.hasOwnProperty("currentPage")
+        ? Number(action.payload.currentPage)
+        : 1;
+      state.categoryId = action.payload.hasOwnProperty("categoryId")
+        ? Number(action.payload.categoryId)
+        : 0;
+      state.sort = action.payload.sort;
     },
   },
 });

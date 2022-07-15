@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Categories,
   Sort,
@@ -24,7 +24,6 @@ const Home: React.FC = () => {
   const dispatch = useAppDispatch();
   const isMounted = React.useRef(false);
   let [searchParams, setSearchParams] = useSearchParams();
-
 
   const { items, status } = useSelector(selectPizzaData);
   const { categoryId, sort, currentPage, searchValue } =
@@ -59,33 +58,34 @@ const Home: React.FC = () => {
 
     window.scrollTo(0, 0);
   };
-  React.useEffect(()=>{
-    if(window.location.search){
-    const obj={} as any
-    for (const [key, value] of searchParams.entries()) {
-      obj[key] = value
+  React.useEffect(() => {
+    if (window.location.search) {
+      const obj = {} as any;
+      for (const [key, value] of searchParams.entries()) {
+        obj[key] = value;
+      }
+      obj.sort =
+        sortList.find((objSort) => objSort.sortProperty === obj.sortProperty) ||
+        sortList[0];
+      delete obj.sortProperty;
+
+      dispatch(setFilters(obj));
     }
-     obj.sort = sortList.find(
-            (objSort) => objSort.sortProperty === obj.sortProperty) || sortList[0]
-    delete obj.sortProperty
-
-  dispatch(setFilters(obj))
-}
     isMounted.current = true;
-  },[])
+  }, []);
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     if (isMounted.current) {
       const params = {
-        categoryId: categoryId ,
+        categoryId: categoryId,
         sortProperty: sort.sortProperty,
         currentPage: currentPage || 1,
       };
       const queryString = qs.stringify(params, { skipNulls: true });
-      setSearchParams(queryString)
-getPizzas()
+      setSearchParams(queryString);
+      getPizzas();
     }
-  },[categoryId, sort.sortProperty, currentPage])
+  }, [categoryId, sort.sortProperty, currentPage]);
 
   const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
   const skeletons = [...new Array(6)].map((_, index) => (

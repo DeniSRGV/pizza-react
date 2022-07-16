@@ -34,7 +34,12 @@ const filterSlice = createSlice({
       state.categoryId = action.payload.hasOwnProperty("categoryId")
         ? Number(action.payload.categoryId)
         : 0;
-      state.sort = action.payload.sort;
+      state.sort = action.payload.hasOwnProperty("sort")
+        ? action.payload.sort
+        : {
+            name: "популярности",
+            sortProperty: SortPropertyEnum.RATING_DESC,
+          };
     },
   },
 });

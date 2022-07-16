@@ -5,9 +5,13 @@ import { useSelector } from "react-redux";
 import logoSvg from "../assets/img/logo-pizza.svg";
 import { Search } from "./";
 import { selectCart } from "../redux/cart/selectors";
+import { useAppDispatch } from "../redux/store";
+import { setFilters } from "../redux/filter/slice";
+import { FilterSliceState } from "../redux/filter/types";
 
 export const Header: React.FC = () => {
   const { items, totalPrice } = useSelector(selectCart);
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const isMounted = React.useRef(false);
 
@@ -23,11 +27,13 @@ export const Header: React.FC = () => {
     }
     isMounted.current = true;
   }, [items]);
-
+  const onFilter = () => {
+    dispatch(setFilters({} as FilterSliceState));
+  };
   return (
     <div className="header">
       <div className="container">
-        <Link to="/">
+        <Link to="/" onClick={onFilter}>
           <div className="header__logo">
             <img width="48" src={logoSvg} alt="Pizza logo" />
             <div>

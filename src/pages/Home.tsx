@@ -60,14 +60,14 @@ const Home: React.FC = () => {
   };
   React.useEffect(() => {
     if (window.location.search) {
-      const obj = {} as any;
+      const obj: any = {};
       for (const [key, value] of searchParams.entries()) {
         obj[key] = value;
       }
       obj.sort =
         sortList.find((objSort) => objSort.sortProperty === obj.sortProperty) ||
         sortList[0];
-      delete obj.sortProperty;
+      console.log(obj);
 
       dispatch(setFilters(obj));
     }
@@ -85,7 +85,7 @@ const Home: React.FC = () => {
       setSearchParams(queryString);
       getPizzas();
     }
-  }, [categoryId, sort.sortProperty, currentPage]);
+  }, [categoryId, sort.sortProperty, currentPage, searchValue]);
 
   const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
   const skeletons = [...new Array(6)].map((_, index) => (
